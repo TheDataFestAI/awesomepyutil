@@ -22,7 +22,15 @@
     # or
     py -m unittest tests.test_arithmetic_operations.TestArithmeticOperations
     ```
+5. Git -
+    ```shell
+    git init -b main
+    git add .
+    git status
+    git commit -m "First commit"
 
+    git remote add origin https://github.com/TheDataFestAI/awesomepyutil.git
+    ```
 # Reference:
 
 1. Python PyPi Package -
