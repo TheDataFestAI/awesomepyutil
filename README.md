@@ -10,7 +10,7 @@ Simple python package.
     ```
 2. Use `Arithmetic Operations`
     ```shell
-    from arithmetic_ops.arithmetic_operations import func_divide
+    from awesomepyutil.arithmetic_ops.arithmetic_operations import func_divide
 
     out = func_divide(5,2)
     print(f"out: {out}")
@@ -18,4 +18,19 @@ Simple python package.
     # Out: 2.5
     ```
 
-
+3. Use `NSE`
+    ```shell
+    # create NSE Object
+    nse = NSE()
+    
+    # Get daily index gainers
+    out = nse.get_index_gainers()
+    print(out)
+    
+    # Get daily index loosers
+    out = nse.get_index_loosers()
+    print(out)
+    
+    out = nse.get_marketstate_daily()
+    print(f"{out}")
+    ```

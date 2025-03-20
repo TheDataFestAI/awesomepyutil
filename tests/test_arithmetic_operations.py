@@ -1,9 +1,9 @@
+import os, sys
 import unittest
-# import os, sys
-# print(sys.path)
-# print(os.getcwd())
 
-from arithmetic_ops.arithmetic_operations import func_divide
+sys.path.append(os.getcwd())
+
+from src.awesomepyutil.arithmetic_ops.arithmetic_operations import func_divide
 
 class TestArithmeticOperations(unittest.TestCase):
     
