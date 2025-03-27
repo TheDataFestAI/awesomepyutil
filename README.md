@@ -20,6 +20,8 @@ Simple python package.
 
 3. Use `NSE`
     ```shell
+    from awesomepyutil.stock_market.nse import NSE
+    
     # create NSE Object
     nse = NSE()
     

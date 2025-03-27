@@ -3,6 +3,7 @@
 """
 
 import os, sys
+from urllib import response
 import pandas as pd
 import requests
 
@@ -31,9 +32,12 @@ class NSE():
         "index_gainers": "/api/live-analysis-variations?index=gainers",
         "index_loosers": "/api/live-analysis-variations?index=loosers",
         "nse_etf": "/api/etf",
-        "allcontracts": "api/equity-stock?index=allcontracts",
-        "nifty50_daily": "/api/marketStatus",
-        "test": "/api/search/autocomplete"
+        "nse_fii_dii": "/api/fiidiiTradeReact",
+        # "allcontracts": "api/equity-stock?index=allcontracts",
+        "nifty50_marketstate_daily": "/api/marketStatus",
+        "nse_index_daily": "/api/equity-stockIndices?index={}",
+        "nse_index_symbol": "/api/index-names",
+        # "test": "/api/search/autocomplete"
     }
     
     index_gainers_loosers_col = ["symbol", "ltp", "prev_price", "open_price", "high_price", "low_price", "trade_quantity", "series", "net_price", "turnover", "market_type", "ca_ex_dt", "ca_purpose", "perChange"]
@@ -56,7 +60,7 @@ class NSE():
         return out
     
     def get_marketstate_daily(self):
-        url = self.nse_apis["nse_base_url"] + self.nse_apis["nifty50_daily"]
+        url = self.nse_apis["nse_base_url"] + self.nse_apis["nifty50_marketstate_daily"]
         response = self.session.get(url, headers=self.nse_headers, timeout=5, cookies=self.cookies)
         if response.status_code == 200:
             # out_df = pd.DataFrame(response.json().get("marketcap"))
@@ -67,6 +71,33 @@ class NSE():
             return out_df
         else:
             return {"error": "Failed to fetch data"}
+    
+    def get_nifty50_daily_data(self):
+        index_symbol = "NIFTY 50".replace(" ", "%20")
+        columns = ["symbol", "open", "dayHigh", "dayLow", "lastPrice", "previousClose", "change", "yearHigh", "yearLow",
+                   "totalTradedVolume", "lastUpdateTime"]
+        url = self.nse_apis["nse_base_url"] + self.nse_apis["nse_index_daily"].format(index_symbol)
+        try:
+            response = self.session.get(url, headers=self.nse_headers, timeout=5, cookies=self.cookies)
+            # response.raise_for_status()
+        except Exception as e:
+            print(f"error raised, {e}")
+        else:
+            out = response.json()
+            lastUpdateTime =  out.get("metadata").get("timeVal")
+            out_df = pd.DataFrame(out.get("data")).loc[:, columns]
+            out_df["lastUpdateTime"] = lastUpdateTime
+            return out_df
+    
+    def get_index_symbol(self):
+        url = self.nse_apis["nse_base_url"] + self.nse_apis["nse_index_symbol"]
+        response = self.session.get(url, headers=self.nse_headers, timeout=5, cookies=self.cookies)
+        if response.status_code == 200:
+            out = response.json()
+            out_dict = dict()
+            for i in out.get("stn"):
+                out_dict[i[0]] = i[1]
+        return out_dict
     
     # get nse index gainer
     def get_index_gainers(self) -> dict:
@@ -132,9 +163,15 @@ class NSE():
             return index_loosers_df
         else:
             return {"error": "Failed to fetch data"}
-        
-    def _get_fii_data(self) -> dict:
-        return 1
+    
+    # get nse fii dii data 
+    def get_fii_dii_data(self) -> dict:
+        url =  self.nse_apis["nse_base_url"] + self.nse_apis["nse_fii_dii"]
+        response = self.session.get(url, headers=self.nse_headers, timeout=5, cookies=self.cookies)
+        if response.status_code == 200:
+            out = response.json()
+            out_df = pd.DataFrame(out)
+        return out_df
 
     
     
@@ -148,15 +185,13 @@ if __name__ == "__main__":
     # for i in company_list:
     #     out = company_meta_details(i)
     #     print(out)
+    
     nse = NSE()
-    
-    out = nse.get_index_gainers()
+    # out = nse.get_index_gainers()    
+    # out = nse.get_index_loosers()    
+    # out = nse.get_marketstate_daily()
+    # out = nse.get_fii_dii_data()
+    # out = nse.get_nifty50_daily_data()
+    out = nse.get_index_symbol()
     print(f"{out}")
-    
-    out = nse.get_index_loosers()
-    print(f"{out}")
-    
-    out = nse.get_marketstate_daily()
-    print(f"{out}")
-    
     
