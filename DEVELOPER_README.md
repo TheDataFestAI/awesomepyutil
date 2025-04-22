@@ -18,6 +18,7 @@
     ```shell
     py -m build
     py -m twine upload --repository testpypi dist/*
+    <!-- py -m twine upload --repository testpypi --skip-existing dist/* -->
     py -m twine upload --repository pypi dist/*
     ```
 
@@ -29,7 +30,7 @@
     ```
 4. Test from testpypi distribution:
     ```shell
-    pip install --index-url https://test.pypi.org/simple/ --no-deps basicpkg
+    pip install --index-url https://test.pypi.org/simple/ --no-deps awesomepyutil
     ```
 4. Run the testcase -
     ```shell
@@ -57,6 +58,7 @@
     git remote add origin https://github.com/TheDataFestAI/awesomepyutil.git
     git remote set-url origin https://<user_name>:<access_token>@github.com/TheDataFestAI/<repo_name>.git
     ```
+
 # Reference:
 
 1. Python PyPi Package -
